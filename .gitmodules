@@ -1,0 +1,6 @@
+[submodule "vendors/Symfony/Component/DependencyInjection"]
+	path = vendors/Symfony/Component/DependencyInjection
+	url = git://github.com/symfony/DependencyInjection.git
+[submodule "vendors/Symfony/Component/Config"]
+	path = vendors/Symfony/Component/Config
+	url = git://github.com/symfony/Config.git
