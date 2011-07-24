@@ -7,7 +7,7 @@ use \Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use \Symfony\Component\Config\FileLocator;
 
 /**
- * @author Masich Ivan
+ * @author Masich Ivan <john@masich.com>
  */
 class Container
 {

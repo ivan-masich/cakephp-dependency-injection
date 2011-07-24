@@ -4,7 +4,7 @@ use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use \dependency_injection\libs\Container;
 
 /**
- * @author Masich Ivan
+ * @author Masich Ivan <john@masich.com>
  */
 class ContainerBehavior extends ModelBehavior
 {

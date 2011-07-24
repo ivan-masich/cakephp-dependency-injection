@@ -4,7 +4,7 @@ use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use \dependency_injection\libs\Container as ContainerLib;
 
 /**
- * @author Masich Ivan
+ * @author Masich Ivan <john@masich.com>
  */
 class ContainerComponent extends \Object
 {
