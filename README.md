@@ -78,3 +78,8 @@ Application configuration you need to place in **app/configs/services.xml**, exa
         </services>
 
     </container>
+
+Todo:
+-----
+1. Add autoload service configuration from plugins.
+2. Make plugin services configurable from app without change source in plugin.
