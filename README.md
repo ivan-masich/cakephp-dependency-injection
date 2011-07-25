@@ -15,8 +15,7 @@ Init class loader:
 ------------------
 Add this code to **app/config/bootstrap.php**:
 
-    //path to ClassLoader.php file
-    require_once __DIR__ . DS . '..' . DS . 'plugins' . DS . 'dependency_injection' . DS . 'libs' . DS . 'ClassLoader.php';
+    App::import('libs', 'DependencyInjection.ClassLoader', array('file' => 'ClassLoader.php'));
     
     \dependency_injection\libs\ClassLoader::register();
 
