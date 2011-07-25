@@ -78,7 +78,7 @@ Application configuration you need to place in **app/configs/services.xml**, exa
         </services>
 
     </container>
-*More examples you can find here [Examples \*.xml (wiki)](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Examples-*.xml).*
+More examples you can find here [Examples \*.xml (wiki)](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Examples-*.xml).
 
 Todo:
 -----
