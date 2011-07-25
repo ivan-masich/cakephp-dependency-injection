@@ -14,7 +14,7 @@ class ContainerConfigurator
     /**
      * @var array
      */
-    private $plugins;
+    private $plugins = array();
 
     /**
      * @var \Symfony\Component\DependencyInjection\Loader\XmlFileLoader
