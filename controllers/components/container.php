@@ -9,12 +9,13 @@ use \dependency_injection\libs\Container as ContainerLib;
 class ContainerComponent extends \Object
 {
     /**
-     * Startup component method
+     * Initialize component method
      *
-     * @param Controller $controller
+     * @param Symfony\Component\DependencyInjection\ContainerAwareInterface  $controller
+     * @param array $settings
      * @return void
      */
-    public function startup(ContainerAwareInterface $controller)
+    public function initialize(ContainerAwareInterface $controller, $settings = array())
     {
         $controller->setContainer(ContainerLib::getInstance());
     }
