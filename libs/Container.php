@@ -17,29 +17,15 @@ class Container
     protected static $instance;
 
     /**
-     * @var array
-     */
-    protected static $plugins;
-
-    /**
      * @static
      * @return \Symfony\Component\DependencyInjection\ContainerBuilder
      */
     public static function getInstance()
     {
         if (is_null(self::$instance)) {
-            self::$instance = new ContainerConfigurator(self::$plugins);
+            self::$instance = new ContainerConfigurator();
         }
         
         return self::$instance->getContainer();
-    }
-
-    /**
-     * @static
-     * @return void
-     */
-    public static function setPlugins(array $plugins)
-    {
-        self::$plugins = $plugins;
     }
 }
