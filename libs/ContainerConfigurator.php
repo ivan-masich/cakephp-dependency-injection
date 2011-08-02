@@ -4,6 +4,7 @@ namespace dependency_injection\libs;
 
 use \Symfony\Component\DependencyInjection\ContainerBuilder;
 use \Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use \Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use \Symfony\Component\Config\FileLocator;
 
 /**
@@ -14,7 +15,11 @@ class ContainerConfigurator
     /**
      * @var array
      */
-    private $plugins = array();
+    private $mainConfig = array(
+        'appConfigFileType' => 'xml', // xml or yaml
+        'appConfigFileName' => 'di_services',
+        'pluginConfigFileName' => 'di_plugin_config',
+    );
 
     /**
      * @var \Symfony\Component\DependencyInjection\Loader\XmlFileLoader
@@ -27,13 +32,11 @@ class ContainerConfigurator
     private $container;
 
     /**
-     *
+     * 
      */
-    public function __construct($plugins = null)
+    public function __construct()
     {
-        if ($plugins) {
-            $this->plugins = $plugins;
-        }
+        $this->loadMainConfig();
 
         $this->container = new ContainerBuilder();
 
@@ -53,15 +56,41 @@ class ContainerConfigurator
     }
 
     /**
+     * Load configuration from app/config/di.ini
+     *
+     * @return void
+     */
+    private function loadMainConfig()
+    {
+        if (file_exists(CONFIGS . 'di.ini')) {
+            $fileConfig = parse_ini_file(CONFIGS . 'di.ini');
+
+            $this->mainConfig = array_merge($this->mainConfig, $fileConfig);
+        }
+    }
+
+    /**
      * @return \Symfony\Component\DependencyInjection\Loader\XmlFileLoader
      */
     private function getXmlFileLoader()
     {
-        if ($this->loader == null) {
-            $this->loader = new XmlFileLoader($this->container, new FileLocator());
+        if (empty($this->loader['xml'])) {
+            $this->loader['xml'] = new XmlFileLoader($this->container, new FileLocator());
         }
 
-        return $this->loader;
+        return $this->loader['xml'];
+    }
+
+    /**
+     * @return \Symfony\Component\DependencyInjection\Loader\YamlFileLoader
+     */
+    private function getYamlFileLoader()
+    {
+        if (empty($this->loader['yaml'])) {
+            $this->loader['yaml'] = new YamlFileLoader($this->container, new FileLocator());
+        }
+
+        return $this->loader['yaml'];
     }
 
     /**
@@ -69,7 +98,15 @@ class ContainerConfigurator
      */
     private function configureApp()
     {
-        $this->getXmlFileLoader()->load(CONFIGS . 'services.xml');
+        if ($this->mainConfig['appConfigFileType'] == 'xml') {
+            if (file_exists(CONFIGS . $this->mainConfig['appConfigFileName'] . '.xml')) {
+                $this->getXmlFileLoader()->load(CONFIGS . $this->mainConfig['appConfigFileName'] . '.xml');
+            }
+        } else {
+            if (file_exists(CONFIGS . $this->mainConfig['appConfigFileName'] . '.yml')) {
+                $this->getYamlFileLoader()->load(CONFIGS . $this->mainConfig['appConfigFileName'] . '.yml');
+            }
+        }
     }
 
     /**
@@ -77,7 +114,7 @@ class ContainerConfigurator
      */
     private function configurePlugins()
     {
-        foreach ($this->plugins as $plugin) {
+        foreach (array() as $plugin) {
             if (file_exists(APP . DS . 'plugins' . DS . $plugin . DS . 'DependencyInjection' . DS . 'Extension.php')) {
                 $extensionClass = '\\' . $plugin . '\\DependencyInjection\\Extension';
                 $this->container->registerExtension(new $extensionClass());
