@@ -81,7 +81,8 @@ class ContainerConfigurator
             if (file_exists(APP . DS . 'plugins' . DS . $plugin . DS . 'DependencyInjection' . DS . 'Extension.php')) {
                 $extensionClass = '\\' . $plugin . '\\DependencyInjection\\Extension';
                 $this->container->registerExtension(new $extensionClass());
-                $this->container->loadFromExtension('test_plugin', array());
+                $this->container->loadFromExtension($plugin, array());
+                $this->container->compile();
             }
         }
     }
