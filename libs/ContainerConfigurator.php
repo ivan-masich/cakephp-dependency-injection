@@ -16,11 +16,15 @@ class ContainerConfigurator
     /**
      * @var array
      */
-    private $mainConfig = array(
-        'appConfigFileType' => 'xml', // xml or yaml
-        'appConfigFileName' => 'di_services',
-        'pluginConfigFileName' => 'di_plugin_config',
+    private $mainConfiguration = array(
+        'app_config_file_name' => 'di_services',
+        'plugin_config_file_name' => 'di_plugin_config',
     );
+
+    /**
+     * @var array
+     */
+    private $pluginsConfiguration = array();
 
     /**
      * @var \Symfony\Component\DependencyInjection\Loader\XmlFileLoader
@@ -88,7 +92,7 @@ class ContainerConfigurator
             $fileConfig = $this->getYaml()->parse(CONFIGS . 'di.yml');
         }
 
-        $this->mainConfig = array_merge($this->mainConfig, $fileConfig);
+        $this->mainConfiguration = array_merge($this->mainConfiguration, $fileConfig);
     }
 
     /**
@@ -120,14 +124,22 @@ class ContainerConfigurator
      */
     private function configureApp()
     {
-        if ($this->mainConfig['appConfigFileType'] == 'xml') {
-            if (file_exists(CONFIGS . $this->mainConfig['appConfigFileName'] . '.xml')) {
-                $this->getXmlFileLoader()->load(CONFIGS . $this->mainConfig['appConfigFileName'] . '.xml');
-            }
-        } else {
-            if (file_exists(CONFIGS . $this->mainConfig['appConfigFileName'] . '.yml')) {
-                $this->getYamlFileLoader()->load(CONFIGS . $this->mainConfig['appConfigFileName'] . '.yml');
-            }
+        if (file_exists(CONFIGS . $this->mainConfiguration['app_config_file_name'] . '.xml')) {
+            $this->getXmlFileLoader()->load(CONFIGS . $this->mainConfiguration['app_config_file_name'] . '.xml');
+        } else if (file_exists(CONFIGS . $this->mainConfiguration['app_config_file_name'] . '.yml')) {
+            $this->getYamlFileLoader()->load(CONFIGS . $this->mainConfiguration['app_config_file_name'] . '.yml');
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function readPluginsConfiguration()
+    {
+        $filename = CONFIGS . $this->mainConfiguration['plugin_config_file_name'] . '.yml';
+        
+        if (is_file($filename)) {
+            $this->pluginsConfiguration = $this->getYaml()->parse($filename);
         }
     }
 
@@ -136,12 +148,21 @@ class ContainerConfigurator
      */
     private function configurePlugins()
     {
-        foreach (array() as $plugin) {
-            if (file_exists(APP . DS . 'plugins' . DS . $plugin . DS . 'DependencyInjection' . DS . 'Extension.php')) {
-                $extensionClass = '\\' . $plugin . '\\DependencyInjection\\Extension';
-                $this->container->registerExtension(new $extensionClass());
-                $this->container->loadFromExtension($plugin, array());
+        $this->readPluginsConfiguration();
+
+        foreach ($this->pluginsConfiguration as $pluginName => $pluginOptions) {
+            $extensionClass = '\\' . $pluginName . '\\DependencyInjection\\Extension';
+
+            if (!empty($pluginOptions['options']['class_name'])) {
+                $extensionClass = $pluginOptions['options']['class_name'];
             }
+
+            if (!empty($pluginOptions['options']['class_path'])) {
+                require_once $pluginOptions['options']['class_path'];
+            }
+            
+            $this->container->registerExtension(new $extensionClass());
+            $this->container->loadFromExtension($pluginName, $pluginOptions['config'] ?: array());
         }
     }
 }
