@@ -6,6 +6,7 @@ use \Symfony\Component\DependencyInjection\ContainerBuilder;
 use \Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use \Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use \Symfony\Component\Config\FileLocator;
+use \Symfony\Component\Yaml\Yaml;
 
 /**
  * @author Masich Ivan <john@masich.com>
@@ -27,6 +28,11 @@ class ContainerConfigurator
     private  $loader;
 
     /**
+     * @var \Symfony\Component\Yaml\Yaml
+     */
+    private $yaml;
+
+    /**
      * @var \Symfony\Component\DependencyInjection\ContainerBuilder
      */
     private $container;
@@ -44,7 +50,7 @@ class ContainerConfigurator
 
         $this->configurePlugins();
 
-        //$this->container->compile();
+        $this->container->compile();
     }
 
     /**
@@ -56,17 +62,33 @@ class ContainerConfigurator
     }
 
     /**
+     * @return \Symfony\Component\Yaml\Yaml
+     */
+    private function getYaml()
+    {
+        if (!$this->yaml) {
+            $this->yaml = new Yaml();
+        }
+
+        return $this->yaml;
+    }
+
+    /**
      * Load configuration from app/config/di.ini
      *
      * @return void
      */
     private function loadMainConfig()
     {
+        $fileConfig = array();
+        
         if (file_exists(CONFIGS . 'di.ini')) {
             $fileConfig = parse_ini_file(CONFIGS . 'di.ini');
-
-            $this->mainConfig = array_merge($this->mainConfig, $fileConfig);
+        } else if (file_exists(CONFIGS . 'di.yml')) {
+            $fileConfig = $this->getYaml()->parse(CONFIGS . 'di.yml');
         }
+
+        $this->mainConfig = array_merge($this->mainConfig, $fileConfig);
     }
 
     /**
@@ -119,7 +141,6 @@ class ContainerConfigurator
                 $extensionClass = '\\' . $plugin . '\\DependencyInjection\\Extension';
                 $this->container->registerExtension(new $extensionClass());
                 $this->container->loadFromExtension($plugin, array());
-                $this->container->compile();
             }
         }
     }
