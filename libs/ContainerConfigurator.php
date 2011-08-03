@@ -17,6 +17,9 @@ class ContainerConfigurator
      * @var array
      */
     private $mainConfiguration = array(
+        'cache_engine' => 'default',
+        'cache_container_key' => 'diPluginContainer',
+        'use_cache' => false,
         'app_config_file_name' => 'di_services',
         'plugin_config_file_name' => 'di_plugin_config',
     );
@@ -48,13 +51,17 @@ class ContainerConfigurator
     {
         $this->loadMainConfig();
 
-        $this->container = new ContainerBuilder();
+        if (!$this->readContainerFromCache()) {
+            $this->container = new ContainerBuilder();
 
-        $this->configureApp();
+            $this->configureApp();
 
-        $this->configurePlugins();
+            $this->configurePlugins();
 
-        $this->container->compile();
+            $this->container->compile();
+
+            $this->writeContainerToCache();
+        }
     }
 
     /**
@@ -63,6 +70,36 @@ class ContainerConfigurator
     public function getContainer()
     {
         return $this->container;
+    }
+
+    private function readContainerFromCache()
+    {
+        if (\Configure::read('debug') > 0 || !$this->mainConfiguration['use_cache']) {
+            return false;
+        }
+
+        $key = $this->mainConfiguration['cache_container_key'];
+        $config = $this->mainConfiguration['cache_engine'];
+
+        if (($container = \Cache::read($key, $config)) === false) {
+            return false;
+        }
+
+        $this->container = unserialize($container);
+
+        return true;
+    }
+
+    private function writeContainerToCache()
+    {
+        if (\Configure::read('debug') > 0 || !$this->mainConfiguration['use_cache']) {
+            return false;
+        }
+
+        $key = $this->mainConfiguration['cache_container_key'];
+        $config = $this->mainConfiguration['cache_engine'];
+
+        \Cache::write($key, serialize($this->container), $config);
     }
 
     /**
