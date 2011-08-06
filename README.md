@@ -7,13 +7,14 @@ More about DI you may find in this articles: [Martin Fowler "Inversion of Contro
 Requirements:
 -------------
 1. **PHP** version **5.3.2** or greater
-2. **CakePHP** version **1.3** or greater
+2. **CakePHP** version **1.3.x**
 3. Plugin folder name should be **dependency_injection**
 
 
 Init class loader:
 ------------------
-Add this code to **app/config/bootstrap.php**:
+For this plugin you need use class loader, for make your life easier I create class loader for this plugin.
+For init plugin class loader you need add this code to **app/config/bootstrap.php**:
 
     App::import('libs', 'DependencyInjection.ClassLoader', array('file' => 'ClassLoader.php'));
     
@@ -60,7 +61,7 @@ For use DI in model you need inject DI container. You need implement **Container
 
 Application configuration:
 -------------------------
-Application configuration you need to place in **app/configs/services.xml**, example:
+**Xml** application service configuration you need place to **app/configs/di_services.xml**, example:
 
     <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -77,9 +78,13 @@ Application configuration you need to place in **app/configs/services.xml**, exa
         </services>
 
     </container>
-More examples you can find here [Examples \*.xml (wiki)](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Examples-*.xml).
+More xml examples you can find here [Examples \*.xml (wiki)](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Examples-*.xml).
 
-Todo:
------
-1. Add autoload service configuration from plugins.
-2. Make plugin services configurable from app without change source in plugin.
+
+**Yaml** application service configuration you need place to **app/configs/di_services.yml**, example:
+
+    services:
+    service_name:
+        class:        ClassName
+        arguments:    [example]
+More yaml examples you can find here [Examples \*.xml (wiki)](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Examples-*.yml).
