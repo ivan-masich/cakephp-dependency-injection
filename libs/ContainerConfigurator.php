@@ -205,7 +205,9 @@ class ContainerConfigurator
             $extension = new $extensionClass();
 
             if ($extension instanceof CompilerPassDataInterface) {
-                foreach ($extension->getCompilerPassData() as $object) {
+                $compilerPassData = $extension->getCompilerPassData() ?: array();
+                
+                foreach ($compilerPassData as $object) {
                     $this->container->addCompilerPass($object);
                 }
             }
