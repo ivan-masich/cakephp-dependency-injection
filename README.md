@@ -61,7 +61,7 @@ For use DI in model you need inject DI container. You need implement **Container
 
 Application configuration:
 -------------------------
-**Xml** application service configuration you need place to **app/configs/di_services.xml**, example:
+**Xml** application service configuration you need place to **app/config/di_services.xml**, example:
 
     <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -81,10 +81,67 @@ Application configuration:
 More xml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Container-configuration-examples).
 
 
-**Yaml** application service configuration you need place to **app/configs/di_services.yml**, example:
+**Yaml** application service configuration you need place to **app/config/di_services.yml**, example:
 
     services:
         service_name:
             class:        ClassName
             arguments:    [example]
 More yaml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Container-configuration-examples).
+
+
+Plugins configuration:
+----------------------
+
+DI plugin may load plugin services automaticly and you may configurate plugin services without change it source code, this process can be divided into several steps:
+
+**Create Extension class in your plugin:**
+
+    <?php
+
+    // app/plugins/example_plugin/DependencyInjection/Extension.php
+
+    namespace example_plugin\DependencyInjection;
+
+    use \dependency_injection\DependencyInjection\BaseExtension;
+    use \Symfony\Component\DependencyInjection\ContainerBuilder;
+
+    class Extension extends BaseExtension {
+
+        /**
+         * {@inheritDoc}
+         */
+        function load(array $config, ContainerBuilder $container)
+        {
+            // TODO: Implement load() method.
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        function getAlias()
+        {
+            return 'example_plugin';
+        }
+    }
+More info about how to create Extension class in plugin you can find here [Extension class in plugin](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Extension-class-in-plugin).
+
+**Configure plugins in application:** allow only in yaml format, for this you need put all in **app/config/di_plugin_config.yml**:
+
+In this example you will see how set  custom  Extension class name and set path from where it will be included(with require_once function),
+by default class will loaded using your autoload system, and full class name will be generated with namespace by this rule: **\\$pluginName\\DependencyInjection\\Extension**
+
+    example_plugin:
+        options:
+            class_name: ExtensionClassName
+            class_path: "<?php echo APP . 'plugins' . DS . 'example_plugin' . DS . 'DependencyInjection' . DS . 'ExtensionClassName.php'; ?>"
+        config:
+            param: example
+            param_collection:
+                - one
+                - two
+
+Example without any settings (will be used \\example_plugin\\DependencyInjection\\Extension class):
+
+    example_plugin:
+        config: ~

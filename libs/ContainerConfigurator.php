@@ -195,7 +195,7 @@ class ContainerConfigurator
             }
 
             if (!empty($pluginOptions['options']['class_path'])) {
-                require_once $pluginOptions['options']['class_path'];
+                require_once($pluginOptions['options']['class_path']);
             }
             
             $this->container->registerExtension(new $extensionClass());
