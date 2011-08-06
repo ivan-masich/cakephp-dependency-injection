@@ -78,7 +78,7 @@ Application configuration:
         </services>
 
     </container>
-More xml examples you can find here [Examples \*.xml (wiki)](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Examples-*.xml).
+More xml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Container-configuration-examples).
 
 
 **Yaml** application service configuration you need place to **app/configs/di_services.yml**, example:
@@ -87,4 +87,4 @@ More xml examples you can find here [Examples \*.xml (wiki)](https://github.com/
         service_name:
             class:        ClassName
             arguments:    [example]
-More yaml examples you can find here [Examples \*.yml (wiki)](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Examples-*.yml).
+More yaml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Container-configuration-examples).
