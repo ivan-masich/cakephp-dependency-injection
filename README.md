@@ -84,7 +84,7 @@ More xml examples you can find here [Examples \*.xml (wiki)](https://github.com/
 **Yaml** application service configuration you need place to **app/configs/di_services.yml**, example:
 
     services:
-    service_name:
-        class:        ClassName
-        arguments:    [example]
-More yaml examples you can find here [Examples \*.xml (wiki)](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Examples-*.yml).
+        service_name:
+            class:        ClassName
+            arguments:    [example]
+More yaml examples you can find here [Examples \*.yml (wiki)](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Examples-*.yml).
