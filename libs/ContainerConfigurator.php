@@ -8,6 +8,7 @@ use \Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use \Symfony\Component\Config\FileLocator;
 use \Symfony\Component\Yaml\Yaml;
 use \dependency_injection\DependencyInjection\CompilerPassDataInterface;
+use \dependency_injection\cache\CakePHPCacheContainer;
 
 /**
  * @author Masich Ivan <john@masich.com>
@@ -52,17 +53,31 @@ class ContainerConfigurator
     {
         $this->loadMainConfig();
 
-        if (!$this->readContainerFromCache()) {
-            $this->container = new ContainerBuilder();
+        if ($this->mainConfiguration['use_cache']) {
+            $cacheContainer = new CakePHPCacheContainer(
+                $this->mainConfiguration['cache_container_key'],
+                $this->mainConfiguration['cache_engine']
+            );
 
-            $this->configureApp();
+            if (($this->container = $cacheContainer->read()) === false) {
+                $this->init();
 
-            $this->configurePlugins();
-
-            $this->container->compile();
-
-            $this->writeContainerToCache();
+                $cacheContainer->write($this->container);
+            }
+        } else {
+            $this->init();
         }
+    }
+
+    private function init()
+    {
+        $this->container = new ContainerBuilder();
+
+        $this->configureApp();
+
+        $this->configurePlugins();
+
+        $this->container->compile();
     }
 
     /**
@@ -71,36 +86,6 @@ class ContainerConfigurator
     public function getContainer()
     {
         return $this->container;
-    }
-
-    private function readContainerFromCache()
-    {
-        if (\Configure::read('debug') > 0 || !$this->mainConfiguration['use_cache']) {
-            return false;
-        }
-
-        $key = $this->mainConfiguration['cache_container_key'];
-        $config = $this->mainConfiguration['cache_engine'];
-
-        if (($container = \Cache::read($key, $config)) === false) {
-            return false;
-        }
-
-        $this->container = unserialize($container);
-
-        return true;
-    }
-
-    private function writeContainerToCache()
-    {
-        if (\Configure::read('debug') > 0 || !$this->mainConfiguration['use_cache']) {
-            return false;
-        }
-
-        $key = $this->mainConfiguration['cache_container_key'];
-        $config = $this->mainConfiguration['cache_engine'];
-
-        \Cache::write($key, serialize($this->container), $config);
     }
 
     /**
