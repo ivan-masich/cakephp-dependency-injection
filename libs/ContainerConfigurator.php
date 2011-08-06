@@ -7,6 +7,7 @@ use \Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use \Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use \Symfony\Component\Config\FileLocator;
 use \Symfony\Component\Yaml\Yaml;
+use \dependency_injection\DependencyInjection\CompilerPassDataInterface;
 
 /**
  * @author Masich Ivan <john@masich.com>
@@ -197,8 +198,19 @@ class ContainerConfigurator
             if (!empty($pluginOptions['options']['class_path'])) {
                 require_once($pluginOptions['options']['class_path']);
             }
-            
-            $this->container->registerExtension(new $extensionClass());
+
+            /**
+             * @var \dependency_injection\DependencyInjection\CompilerPassDataInterface $extension
+             */
+            $extension = new $extensionClass();
+
+            if ($extension instanceof CompilerPassDataInterface) {
+                foreach ($extension->getCompilerPassData() as $object) {
+                    $this->container->addCompilerPass($object);
+                }
+            }
+
+            $this->container->registerExtension($extension);
             $this->container->loadFromExtension($pluginName, $pluginOptions['config'] ?: array());
         }
     }
