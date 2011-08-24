@@ -19,7 +19,7 @@ class ContainerConfigurator
      * @var array
      */
     private $mainConfiguration = array(
-        'cache_engine' => 'default',
+        'cache_config_name' => 'default',
         'cache_container_key' => 'diPluginContainer',
         'use_cache' => false,
         'app_config_file_name' => 'di_services',
@@ -56,7 +56,7 @@ class ContainerConfigurator
         if ($this->mainConfiguration['use_cache']) {
             $cacheContainer = new CakePHPCacheContainer(
                 $this->mainConfiguration['cache_container_key'],
-                $this->mainConfiguration['cache_engine']
+                $this->mainConfiguration['cache_config_name']
             );
 
             if (($this->container = $cacheContainer->read()) === false) {

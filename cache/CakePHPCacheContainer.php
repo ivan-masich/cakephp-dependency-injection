@@ -6,13 +6,13 @@ namespace dependency_injection\cache;
  */
 class CakePHPCacheContainer implements CacheContainerInterface
 {
-    private $engine;
+    private $cacheConfigName;
 
     private $containerKey;
 
-    public function __construct($containerKey, $engine = 'default')
+    public function __construct($containerKey, $cacheConfigName = 'default')
     {
-        $this->engine = $engine;
+        $this->cacheConfigName = $cacheConfigName;
         $this->containerKey = $containerKey;
     }
 
@@ -23,7 +23,7 @@ class CakePHPCacheContainer implements CacheContainerInterface
         }
 
         $key = $this->containerKey;
-        $config = $this->engine;
+        $config = $this->cacheConfigName;
 
         if (($container = \Cache::read($key, $config)) === false) {
             return false;
@@ -39,7 +39,7 @@ class CakePHPCacheContainer implements CacheContainerInterface
         }
 
         $key = $this->containerKey;
-        $config = $this->engine;
+        $config = $this->cacheConfigName;
 
         \Cache::write($key, serialize($container), $config);
     }
