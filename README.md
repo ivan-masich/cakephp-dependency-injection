@@ -21,42 +21,37 @@ For init plugin class loader you need add this code to **app/config/bootstrap.ph
     \dependency_injection\libs\ClassLoader::register();
 
 
-Get container in controller:
-----------------------------
-For use DI in controller you need inject DI container. You need implement **ContainerAwareInterface** in class and add component **DependencyInjection.Container**, example:
+Configuration:
+--------------
+You may configure this plugin. Configuration params need be placed at app/config folder in di.yml or di.ini file, depending on what file format you want to chose.
 
-    use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
-    use \Symfony\Component\DependencyInjection\ContainerInterface;
+Available params:
 
-    class ExampleController extends AppController implements ContainerAwareInterface
-    {
-        public $components = array('DependencyInjection.Container');
+**cache_config_name**: string default(**default**) - This parameter for set what cache config will be used to cache.<br />
+**cache_container_key**: string default(**diPluginContainer**) - This parameter for set what cache key will be used to cache container.<br />
+**use_cache**: boolean default(**false**) - This parameter for set cache use.<br />
+**app_config_file_name**: string default(**di_services**) - This parameter for set what file name will be used for application service configuration.<br />
+**plugin_config_file_name**: string default(**di_plugin_config**) - This parameter for set what file name will be used for store plugins configurations.<br />
 
-        private $container;
+####Example yaml:
 
-        public function setContainer(ContainerInterface $container = null)
-        {
-            $this->container = $container;
-        }
+    # app/config/di.yml
+
+    use_cache: true
+    app_config_file_name: services
 
 
-Get container in model:
------------------------
-For use DI in model you need inject DI container. You need implement **ContainerAwareInterface** in class and add behavior **DependencyInjection.Container**, example:
+####Example ini:
 
-    use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
-    use \Symfony\Component\DependencyInjection\ContainerInterface;
+    # app/config/di.ini
 
-    class Example extends AppModel implements ContainerAwareInterface
-    {
-        public $actsAs = array('DependencyInjection.Container');
+    use_cache = true
+    cache_config_name = memcacheStorage
 
-        private $container;
 
-        public function setContainer(ContainerInterface $container = null)
-        {
-            $this->container = $container;
-        }
+Cache:
+------
+For best speed result I recommend use cache, but by default cache is disabled in this plugin. To enable cache you need set **use_cache** param to **true** in configuration. More information in previous section.
 
 
 Application configuration:
@@ -129,6 +124,44 @@ Example without any settings (will be used \\example_plugin\\DependencyInjection
 
     example_plugin:
         config: ~
+
+
+Get container in controller:
+----------------------------
+For use DI in controller you need inject DI container. You need implement **ContainerAwareInterface** in class and add component **DependencyInjection.Container**, example:
+
+    use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
+    use \Symfony\Component\DependencyInjection\ContainerInterface;
+
+    class ExampleController extends AppController implements ContainerAwareInterface
+    {
+        public $components = array('DependencyInjection.Container');
+
+        private $container;
+
+        public function setContainer(ContainerInterface $container = null)
+        {
+            $this->container = $container;
+        }
+
+
+Get container in model:
+-----------------------
+For use DI in model you need inject DI container. You need implement **ContainerAwareInterface** in class and add behavior **DependencyInjection.Container**, example:
+
+    use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
+    use \Symfony\Component\DependencyInjection\ContainerInterface;
+
+    class Example extends AppModel implements ContainerAwareInterface
+    {
+        public $actsAs = array('DependencyInjection.Container');
+
+        private $container;
+
+        public function setContainer(ContainerInterface $container = null)
+        {
+            $this->container = $container;
+        }
 
 
 More documentation:
