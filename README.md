@@ -63,22 +63,12 @@ Application configuration:
 -------------------------
 **Xml** application service configuration you need place to **app/config/di_services.xml**, example:
 
-    <?xml version="1.0" encoding="UTF-8" ?>
-
-    <container xmlns="http://symfony.com/schema/dic/services"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-
-        <services>
-
-            <service id="service_name" class="ClassName">
-                <argument>example</argument>
-            </service>
-
-        </services>
-
-    </container>
-More xml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Container-configuration-examples).
+    <services>
+        <service id="service_name" class="ClassName">
+            <argument>example</argument>
+        </service>
+    </services>
+More xml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/container_configuration_examples.md).
 
 
 **Yaml** application service configuration you need place to **app/config/di_services.yml**, example:
@@ -87,7 +77,7 @@ More xml examples you can find here [Container configuration examples](https://g
         service_name:
             class:        ClassName
             arguments:    [example]
-More yaml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Container-configuration-examples).
+More yaml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/container_configuration_examples.md).
 
 
 Plugins configuration:
@@ -106,25 +96,19 @@ DI plugin may load plugin services automaticly and you may configurate plugin se
     use \dependency_injection\DependencyInjection\BaseExtension;
     use \Symfony\Component\DependencyInjection\ContainerBuilder;
 
-    class Extension extends BaseExtension {
-
-        /**
-         * {@inheritDoc}
-         */
+    class Extension extends BaseExtension
+    {
         function load(array $config, ContainerBuilder $container)
         {
             // TODO: Implement load() method.
         }
 
-        /**
-         * {@inheritDoc}
-         */
         function getAlias()
         {
             return 'example_plugin';
         }
     }
-More info about how to create Extension class in plugin you can find here [Extension class in plugin](https://github.com/mind-blowing/cakephp-dependency-injection/wiki/Extension-class-in-plugin).
+More info about how to create Extension class in plugin you can find here [Extension class in plugin](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/extension_class_in_plugin.md).
 
 **Configure plugins in application:** allow only in yaml format, for this you need put all in **app/config/di_plugin_config.yml**:
 
@@ -145,3 +129,9 @@ Example without any settings (will be used \\example_plugin\\DependencyInjection
 
     example_plugin:
         config: ~
+
+
+More documentation:
+-------------------
+
+More documentation you can find in **doc** folder or here [Documentation](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/home.md).
