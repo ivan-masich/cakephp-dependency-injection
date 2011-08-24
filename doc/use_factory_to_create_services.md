@@ -1,6 +1,10 @@
-### Basic example:
+Use factory to create services
+==============================
 
-Xml:
+Basic example:
+-------------
+
+####Xml:
 
     <parameters>
         <!-- ... -->
@@ -16,7 +20,7 @@ Xml:
         />
     </services>
 
-Yaml:
+####Yaml:
 
     parameters:
         # ...
@@ -28,9 +32,10 @@ Yaml:
             factory_class:  %newsletter_factory.class%
             factory_method: get
 
-### Factory object as another service:
+Factory object as another service:
+----------------------------------
 
-Xml:
+####Xml:
 
     <parameters>
         <!-- ... -->
@@ -47,7 +52,7 @@ Xml:
         />
     </services>
 
-Yaml:
+####Yaml:
 
     parameters:
         # ...
@@ -61,9 +66,10 @@ Yaml:
             factory_service:  newsletter_factory
             factory_method:   get
 
-### Passing Arguments to the Factory Method
+Passing Arguments to the Factory Method
+---------------------------------------
 
-Xml:
+####Xml:
 
     <parameters>
         <!-- ... -->
@@ -82,7 +88,7 @@ Xml:
         </service>
     </services>
 
-Yaml:
+####Yaml:
 
     parameters:
         # ...

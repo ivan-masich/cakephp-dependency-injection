@@ -1,6 +1,10 @@
-### Service Parameters
+Container Configuration Examples
+================================
 
-Xml:
+Service Parameters
+------------------
+
+####Xml:
 
     <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -21,7 +25,7 @@ Xml:
 
     </container>
 
-Yaml:
+####Yaml:
 
     parameters:
         my_mailer.class:        Acme\HelloBundle\Mailer
@@ -32,9 +36,10 @@ Yaml:
             class:              %my_mailer.class%
             arguments:          [%my_mailer.transport%]
 
-### Referencing (Injecting) Services
+Referencing (Injecting) Services
+--------------------------------
 
-Xml:
+####Xml:
 
     <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -58,7 +63,7 @@ Xml:
 
     </container>
 
-Yaml:
+####Yaml:
 
     parameters:
         # ...
@@ -71,9 +76,10 @@ Yaml:
             class:     %newsletter_manager.class%
             arguments: [@my_mailer]
 
-### Optional Dependencies: Setter Injection
+Optional Dependencies: Setter Injection
+---------------------------------------
 
-Xml:
+####Xml:
 
     <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -99,7 +105,7 @@ Xml:
 
     </container>
 
-Yaml:
+####Yaml:
 
     parameters:
         # ...
@@ -113,9 +119,10 @@ Yaml:
             calls:
                 - [ setMailer, [ @my_mailer ] ]
 
-### Making References Optional
+Making References Optional
+--------------------------
 
-Xml:
+####Xml:
 
     <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -134,7 +141,7 @@ Xml:
 
     </container>
 
-Yaml:
+####Yaml:
 
     parameters:
         # ...
@@ -144,10 +151,12 @@ Yaml:
             class:     %newsletter_manager.class%
             arguments: [@?my_mailer]
 
-### Marking Services as public / private
+Marking Services as public / private
+------------------------------------
+
 This is common when a service is only defined because it could be used as an argument for another service.
 
-Xml:
+####Xml:
 
     <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -159,16 +168,17 @@ Xml:
 
     </container>
 
-Yaml:
+####Yaml:
 
     services:
         foo:
             class: Acme\HelloBundle\Foo
             public: false
 
-### Aliasing
+Aliasing
+--------
 
-Xml:
+####Xml:
 
     <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -182,7 +192,7 @@ Xml:
 
     </container>
 
-Yaml:
+####Yaml:
 
     services:
         foo:

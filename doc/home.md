@@ -1,3 +1,6 @@
+CakePHP Dependency Injection documentation
+==========================================
+
 Welcome to the cakephp-dependency-injection documentation!
 
 [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/container_configuration_examples.md) - This page show you a lot of different configuration examples.
