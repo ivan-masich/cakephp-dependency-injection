@@ -9,6 +9,6 @@ Welcome to the cakephp-dependency-injection documentation!
 
 [Set External Parameters in the Service Container](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/set_external_parameters_in_the_service_container.md) - This page show you how set external parameters.
 
-[Use Extension class inplugin](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/extension_class_in_plugin.md) - This page show you how use Extension class in your plugin.
+[Use Extension class in plugin](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/extension_class_in_plugin.md) - This page show you how use Extension class in your plugin.
 
 *All documentation and examples that related to settings DI Container has been taken from [Symfony2 Documentation](http://symfony.com/doc/current/)*
