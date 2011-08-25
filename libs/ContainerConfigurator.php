@@ -4,7 +4,11 @@ namespace dependency_injection\libs;
 
 use \Symfony\Component\DependencyInjection\ContainerBuilder;
 use \Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use \Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use \Symfony\Component\Config\FileLocator;
+use \Symfony\Component\Yaml\Yaml;
+use \dependency_injection\DependencyInjection\CompilerPassDataInterface;
+use \dependency_injection\cache\CakePHPCacheContainer;
 
 /**
  * @author Masich Ivan <john@masich.com>
@@ -14,7 +18,18 @@ class ContainerConfigurator
     /**
      * @var array
      */
-    private $plugins = array();
+    private $mainConfiguration = array(
+        'cache_config_name' => 'default',
+        'cache_container_key' => 'diPluginContainer',
+        'use_cache' => false,
+        'app_config_file_name' => 'di_services',
+        'plugin_config_file_name' => 'di_plugin_config',
+    );
+
+    /**
+     * @var array
+     */
+    private $pluginsConfiguration = array();
 
     /**
      * @var \Symfony\Component\DependencyInjection\Loader\XmlFileLoader
@@ -22,26 +37,47 @@ class ContainerConfigurator
     private  $loader;
 
     /**
+     * @var \Symfony\Component\Yaml\Yaml
+     */
+    private $yaml;
+
+    /**
      * @var \Symfony\Component\DependencyInjection\ContainerBuilder
      */
     private $container;
 
     /**
-     *
+     * 
      */
-    public function __construct($plugins = null)
+    public function __construct()
     {
-        if ($plugins) {
-            $this->plugins = $plugins;
-        }
+        $this->loadMainConfig();
 
+        if ($this->mainConfiguration['use_cache']) {
+            $cacheContainer = new CakePHPCacheContainer(
+                $this->mainConfiguration['cache_container_key'],
+                $this->mainConfiguration['cache_config_name']
+            );
+
+            if (($this->container = $cacheContainer->read()) === false) {
+                $this->init();
+
+                $cacheContainer->write($this->container);
+            }
+        } else {
+            $this->init();
+        }
+    }
+
+    private function init()
+    {
         $this->container = new ContainerBuilder();
 
         $this->configureApp();
 
         $this->configurePlugins();
 
-        //$this->container->compile();
+        $this->container->compile();
     }
 
     /**
@@ -53,15 +89,57 @@ class ContainerConfigurator
     }
 
     /**
+     * @return \Symfony\Component\Yaml\Yaml
+     */
+    private function getYaml()
+    {
+        if (!$this->yaml) {
+            $this->yaml = new Yaml();
+        }
+
+        return $this->yaml;
+    }
+
+    /**
+     * Load configuration from app/config/di.ini
+     *
+     * @return void
+     */
+    private function loadMainConfig()
+    {
+        $fileConfig = array();
+        
+        if (file_exists(CONFIGS . 'di.ini')) {
+            $fileConfig = parse_ini_file(CONFIGS . 'di.ini');
+        } else if (file_exists(CONFIGS . 'di.yml')) {
+            $fileConfig = $this->getYaml()->parse(CONFIGS . 'di.yml');
+        }
+
+        $this->mainConfiguration = array_merge($this->mainConfiguration, $fileConfig);
+    }
+
+    /**
      * @return \Symfony\Component\DependencyInjection\Loader\XmlFileLoader
      */
     private function getXmlFileLoader()
     {
-        if ($this->loader == null) {
-            $this->loader = new XmlFileLoader($this->container, new FileLocator());
+        if (empty($this->loader['xml'])) {
+            $this->loader['xml'] = new XmlFileLoader($this->container, new FileLocator());
         }
 
-        return $this->loader;
+        return $this->loader['xml'];
+    }
+
+    /**
+     * @return \Symfony\Component\DependencyInjection\Loader\YamlFileLoader
+     */
+    private function getYamlFileLoader()
+    {
+        if (empty($this->loader['yaml'])) {
+            $this->loader['yaml'] = new YamlFileLoader($this->container, new FileLocator());
+        }
+
+        return $this->loader['yaml'];
     }
 
     /**
@@ -69,7 +147,23 @@ class ContainerConfigurator
      */
     private function configureApp()
     {
-        $this->getXmlFileLoader()->load(CONFIGS . 'services.xml');
+        if (file_exists(CONFIGS . $this->mainConfiguration['app_config_file_name'] . '.xml')) {
+            $this->getXmlFileLoader()->load(CONFIGS . $this->mainConfiguration['app_config_file_name'] . '.xml');
+        } else if (file_exists(CONFIGS . $this->mainConfiguration['app_config_file_name'] . '.yml')) {
+            $this->getYamlFileLoader()->load(CONFIGS . $this->mainConfiguration['app_config_file_name'] . '.yml');
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function readPluginsConfiguration()
+    {
+        $filename = CONFIGS . $this->mainConfiguration['plugin_config_file_name'] . '.yml';
+        
+        if (is_file($filename)) {
+            $this->pluginsConfiguration = $this->getYaml()->parse($filename);
+        }
     }
 
     /**
@@ -77,13 +171,34 @@ class ContainerConfigurator
      */
     private function configurePlugins()
     {
-        foreach ($this->plugins as $plugin) {
-            if (file_exists(APP . DS . 'plugins' . DS . $plugin . DS . 'DependencyInjection' . DS . 'Extension.php')) {
-                $extensionClass = '\\' . $plugin . '\\DependencyInjection\\Extension';
-                $this->container->registerExtension(new $extensionClass());
-                $this->container->loadFromExtension($plugin, array());
-                $this->container->compile();
+        $this->readPluginsConfiguration();
+
+        foreach ($this->pluginsConfiguration as $pluginName => $pluginOptions) {
+            $extensionClass = '\\' . $pluginName . '\\DependencyInjection\\Extension';
+
+            if (!empty($pluginOptions['options']['class_name'])) {
+                $extensionClass = $pluginOptions['options']['class_name'];
             }
+
+            if (!empty($pluginOptions['options']['class_path'])) {
+                require_once($pluginOptions['options']['class_path']);
+            }
+
+            /**
+             * @var \dependency_injection\DependencyInjection\CompilerPassDataInterface $extension
+             */
+            $extension = new $extensionClass();
+
+            if ($extension instanceof CompilerPassDataInterface) {
+                $compilerPassData = $extension->getCompilerPassData() ?: array();
+                
+                foreach ($compilerPassData as $object) {
+                    $this->container->addCompilerPass($object);
+                }
+            }
+
+            $this->container->registerExtension($extension);
+            $this->container->loadFromExtension($pluginName, $pluginOptions['config'] ?: array());
         }
     }
 }
