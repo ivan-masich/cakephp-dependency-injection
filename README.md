@@ -11,6 +11,20 @@ Requirements:
 3. Plugin folder name should be **dependency_injection**
 
 
+Installation:
+-------------
+
+Clone from git:
+
+    cd app/plugins
+    git clone git://github.com/mind-blowing/cakephp-dependency-injection.git dependency_injection
+
+    cd dependency_injection
+    git submodule init
+    git submodule update
+
+
+
 Init class loader:
 ------------------
 For this plugin you need use class loader, for make your life easier I create class loader for this plugin.
