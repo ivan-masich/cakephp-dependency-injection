@@ -77,7 +77,7 @@ Application configuration:
             <argument>example</argument>
         </service>
     </services>
-More xml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/container_configuration_examples.md).
+More xml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/blob/master/doc/container_configuration_examples.md).
 
 
 **Yaml** application service configuration you need place to **app/config/di_services.yml**, example:
@@ -86,7 +86,7 @@ More xml examples you can find here [Container configuration examples](https://g
         service_name:
             class:        ClassName
             arguments:    [example]
-More yaml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/container_configuration_examples.md).
+More yaml examples you can find here [Container configuration examples](https://github.com/mind-blowing/cakephp-dependency-injection/blob/master/doc/container_configuration_examples.md).
 
 
 Plugins configuration:
@@ -117,7 +117,7 @@ DI plugin may load plugin services automaticly and you may configurate plugin se
             return 'example_plugin';
         }
     }
-More info about how to create Extension class in plugin you can find here [Extension class in plugin](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/extension_class_in_plugin.md).
+More info about how to create Extension class in plugin you can find here [Extension class in plugin](https://github.com/mind-blowing/cakephp-dependency-injection/blob/master/doc/extension_class_in_plugin.md).
 
 **Configure plugins in application:** allow only in yaml format, for this you need put all in **app/config/di_plugin_config.yml**:
 
@@ -181,4 +181,4 @@ For use DI in model you need inject DI container. You need implement **Container
 More documentation:
 -------------------
 
-More documentation you can find in **doc** folder or here [Documentation](https://github.com/mind-blowing/cakephp-dependency-injection/blob/develop/doc/home.md).
+More documentation you can find in **doc** folder or here [Documentation](https://github.com/mind-blowing/cakephp-dependency-injection/blob/master/doc/home.md).
